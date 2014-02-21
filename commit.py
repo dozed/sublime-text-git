@@ -10,6 +10,29 @@ from .add import GitAddSelectedHunkCommand
 history = []
 
 
+
+class QuickCommitAndPushCommand(GitTextCommand):
+  def run(self, edit):
+    self.get_window().show_input_panel("Message", "wip", self.on_input, None, None)
+
+  def on_input(self, message):
+    if message.strip() == "":
+      self.panel("No commit message provided")
+      return
+    self.run_command(['git', 'add', '--all', self.get_file_name()],
+      functools.partial(self.add_done, message))
+
+  def add_done(self, message, result):
+    if result.strip():
+      sublime.error_message("Error adding file:\n" + result)
+      return
+    self.run_command(['git', 'commit', '-m', message],
+      self.commit_done)
+
+  def commit_done(self, result):
+    self.run_command(['git', 'push'])
+
+
 class GitQuickCommitCommand(GitTextCommand):
     def run(self, edit):
         self.get_window().show_input_panel("Message", "",
