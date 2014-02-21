@@ -11,7 +11,7 @@ history = []
 
 
 
-class QuickCommitAndPushCommand(GitTextCommand):
+class QuickAddAllCommitAndPushCommand(GitTextCommand):
   def run(self, edit):
     self.get_window().show_input_panel("Message", "wip", self.on_input, None, None)
 
@@ -19,7 +19,7 @@ class QuickCommitAndPushCommand(GitTextCommand):
     if message.strip() == "":
       self.panel("No commit message provided")
       return
-    self.run_command(['git', 'add', '--all', self.get_file_name()],
+    self.run_command(['git', 'add', '--all', '.'],
       functools.partial(self.add_done, message))
 
   def add_done(self, message, result):
